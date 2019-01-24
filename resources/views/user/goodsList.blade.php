@@ -18,7 +18,13 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="portlet light bordered">
-                    <div class="portlet-body">
+                	<div class="portlet-title">
+                    	<div class="caption font-dark">
+                        	<label class="caption-subject font-dark bold">{{trans('home.services')}}</label>
+                          	<p style="margin:0;font-size:14px">所有套餐均不限设备数量</p>
+                        </div>
+                    </div>
+                    <div class="portlet-body">                       
                         <div class="table-scrollable table-scrollable-borderless">
                             <table class="table table-hover table-light table-checkable order-column">
                                 <thead>
@@ -42,7 +48,8 @@
                                                 <!--@if($goods->logo) <a href="{{$goods->logo}}" class="fancybox"><img src="{{$goods->logo}}"/></a> @endif -->
                                                 <span style="font-size: 1.15em; color: #000;">{{$goods->name}}</span>
                                                 <br>
-                                                <span style="color: #000;">{{trans('home.service_traffic')}}：{{$goods->traffic}}</span>
+                                                <span style="color: #000;">{{$goods->type == '1' ? trans('home.service_traffic'): '每月流量'}}：{{$goods->traffic}}</span>
+                                              	<!-- {{trans('home.service_traffic')}} -->
                                                 <br>
                                                 <span style="color: #000;">{{trans('home.service_days')}}：{{$goods->days}} {{trans('home.day')}}</span>
                                             </td>

@@ -17,7 +17,8 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="note note-info">
-                    <p>{{trans('home.promote_link', ['traffic' => $referral_traffic, 'referral_percent' => $referral_percent * 100])}}</p>
+                    <!--<p>{{trans('home.promote_link', ['traffic' => $referral_traffic, 'referral_percent' => $referral_percent * 100])}}</p>-->
+                  	<p>通过您的推广链接注册并激活，您将获得他们消费金额的{{$referral_percent * 100}}%作为奖励。</p>
                 </div>
             </div>
         </div>

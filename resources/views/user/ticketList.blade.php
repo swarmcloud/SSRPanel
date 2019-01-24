@@ -16,6 +16,7 @@
                     <div class="portlet-title">
                         <div class="caption font-dark">
                             <span class="caption-subject bold"> {{trans('home.ticket_title')}} </span>
+                          <div style="font-size:13px">站长微信：<b>kelvinsladder</b></div>
                         </div>
                         <div class="actions">
                             <div class="btn-group">

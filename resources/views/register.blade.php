@@ -85,6 +85,7 @@
                 <input type="hidden" name="register_token" value="{{Session::get('register_token')}}" />
                 <input type="hidden" name="_token" value="{{csrf_token()}}" />
                 <input type="hidden" name="aff" value="{{Session::get('register_aff')}}" />
+              	<p style="color:#d9ecf9;margin:0;padding-left:1em;font-size:12px">若收不到邮件请检查垃圾邮件</p>
             </div>
             <div class="form-group">
                 <label class="control-label visible-ie8 visible-ie9">{{trans('register.password')}}</label>

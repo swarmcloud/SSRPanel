@@ -18,7 +18,7 @@
                                                 <th style="Margin:0;color:#333;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:400;line-height:19px;margin:0;padding:0;text-align:left">
                                                     <h3 style="Margin:0;Margin-bottom:10px;color:inherit;font-family:Helvetica,Arial,sans-serif;font-size:28px;font-weight:400;line-height:1.3;margin:0;margin-bottom:0;padding:0;text-align:left;word-wrap:normal">
                                                         <a href="#" style="Margin:0;color:#40253b;font-family:Helvetica,Arial,sans-serif;font-weight:400;line-height:1.3;margin:0;padding:0;text-align:left;text-decoration:none" target="_blank">
-                                                            SSRPanel
+                                                            {{$websiteName}}
                                                         </a>
                                                     </h3>
                                                 </th>
@@ -68,7 +68,7 @@
                                 <tr style="padding:0;text-align:left;vertical-align:top">
                                     <th style="Margin:0;color:#333;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:400;line-height:19px;margin:0;padding:0;text-align:left">
                                         <div class="release" style="padding-top:5px;padding-left:20px;padding-bottom:20px;">
-                                            <p>这是一封来自 {{$websiteName}} 的账号过期提醒。</p>
+                                          	<p>这是一封来自 <a href="https://www.kelvinsladder.xyz" target="_blank">{{$websiteName}}</a> 的账号过期提醒。</p>
                                             <p>您的账号【{{$lastCanUseDays}}】天后即将过期，为了确保您可要继续正常享受我们的服务，请及时续期。</p>
                                         </div>
                                     </th>

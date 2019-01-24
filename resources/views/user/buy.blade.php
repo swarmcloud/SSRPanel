@@ -23,7 +23,7 @@
                         <tr>
                             <td style="padding: 10px;">
                                 <h2>{{$goods->name}}</h2>
-                                {{trans('home.service_traffic')}} {{$goods->traffic}}
+                                每月流量：{{$goods->traffic}}
                                 <br/>
                                 {{trans('home.service_days')}} {{$goods->days}} {{trans('home.day')}}
                             </td>
@@ -43,7 +43,7 @@
                     <h2 class="invoice-title"> {{trans('home.service_total_price')}} </h2>
                     <p class="invoice-desc grand-total"> ￥{{$goods->price}} </p>
                 </div>
-                <div class="col-xs-6">
+                <div class="col-xs-6" style="visibility:hidden">
                     <h2 class="invoice-title"> {{trans('home.coupon')}} </h2>
                     <p class="invoice-desc">
                     <div class="input-group">

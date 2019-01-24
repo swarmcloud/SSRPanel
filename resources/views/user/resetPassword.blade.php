@@ -87,6 +87,7 @@
                 <div class="form-group">
                     <input class="form-control placeholder-no-fix" type="text" autocomplete="off" placeholder="{{trans('home.username_placeholder')}}" name="username" value="{{Request::old('username')}}" required autofocus />
                     <input type="hidden" name="_token" value="{{csrf_token()}}" />
+                  <p style="color:#d9ecf9;margin:0;padding-left:1em;font-size:12px">若收不到邮件请检查垃圾邮件</p>
                 </div>
             @else
                 <div class="alert alert-danger">

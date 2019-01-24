@@ -41,7 +41,7 @@
 <!-- END LOGO -->
 <!-- BEGIN LOGIN -->
 <div class="content">
-    <nav style="padding-bottom: 20px;text-align: center;">
+    <nav style="text-align: center; visibility:collapse; height:0">
         @if(app()->getLocale() == 'zh-CN')
             <a href="{{url('lang', ['locale' => 'zh-tw'])}}">繁體中文</a>
             <a href="{{url('lang', ['locale' => 'en'])}}">English</a>
@@ -70,6 +70,9 @@
         @else
         @endif
     </nav>
+  	<div>
+      <p style="margin:0; padding: 0 0 20px 0; text-align: center; color:#edf4f8">This is the Internet you deserve</p>
+  	</div>
     <!-- BEGIN LOGIN FORM -->
     <form class="login-form" action="{{url('login')}}" method="post">
         <div class="alert alert-danger display-hide">

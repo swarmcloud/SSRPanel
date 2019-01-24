@@ -15,8 +15,8 @@ return [
     */
 
     'mailgun' => [
-        'domain' => env('MAILGUN_DOMAIN'),
-        'secret' => env('MAILGUN_SECRET'),
+        'domain' => 'mail.kelvinsladder.xyz',
+        'secret' => '6ab97d06332bc244edc679dce9e179b4-a5d1a068-d05e429f',
     ],
 
     'ses' => [

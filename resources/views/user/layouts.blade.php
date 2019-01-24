@@ -135,7 +135,7 @@
                         <span class="title">{{trans('home.tickets')}}</span>
                     </a>
                 </li>
-                <li class="nav-item {{in_array(Request::path(), ['invite']) ? 'active open' : ''}}">
+                <li class="nav-item {{in_array(Request::path(), ['invite']) ? 'active open' : ''}}" style=display:none>
                     <a href="{{url('invite')}}" class="nav-link nav-toggle">
                         <i class="icon-user-follow"></i>
                         <span class="title">{{trans('home.invite_code')}}</span>

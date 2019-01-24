@@ -36,20 +36,103 @@
         @endif
         <div class="row">
             <div class="col-md-8">
+              
+              <div class="row widget-row">
+                    <div class="col-md-12">
+                        <div class="portlet light bordered">
+                          	<div class="portlet-title">
+                                <div class="caption">
+                                	<span class="caption-subject font-blue bold">使用指南</span>
+                                </div>
+                            	<div class="actions">
+                                	<div class="btn-group btn-group-devided">
+                                  		<a href="{{url('tickets')}}" class="btn sbold blue"> 
+                                  			遇到问题
+                                  		</a>
+                               		</div>
+                              	</div>
+                            </div>
+                            <div class="portlet-body" style="font-size:16px;">
+                            	<ol>
+                                  <li>按照下方教程选择系统<b>下载客户端</b></li>
+                                  <li>如遇到问题请联系站长, 微信号<b>kelvinsladder</b>。或者可以使用<a href="{{url('tickets')}}">服务单</a></li>
+                                  <li>购买<a href="{{url('services')}}">服务套餐</a>。新账户有15天有效期，并获赠1GB免费流量</li>
+                                  <li>使用<a href="{{url('referral')}}">推广链接</a>推荐给朋友，可以获得20%红包</li>
+                                  <li>加入<a href="https://t.me/joinchat/FCUWKREklAIUcOM05N2o-w" target="_blank">Telegram群组</a>，获取本站最新消息，报告使用异常</li>
+                            	</ol>
+              						<div class="tabbable-line">
+                                        <ul class="nav nav-tabs">
+                                            <li class="active">
+                                                <a href="#tools1" data-toggle="tab"> <i class="fa fa-apple"></i> iPhone </a>
+                                            </li>
+                                            <li>
+                                                <a href="#tools5" data-toggle="tab"> <i class="fa fa-android"></i> Android </a>
+                                            </li>
+                                            <li>
+                                                <a href="#tools2" data-toggle="tab"> <i class="fa fa-windows"></i> Windows </a>
+                                            </li>
+                                            <li>
+                                                <a href="#tools4" data-toggle="tab"> <i class="fa fa-apple"></i> Mac </a>
+                                            </li>
+                                            <li>
+                                                <a href="#tools3" data-toggle="tab"> <i class="fa fa-linux"></i> Linux </a>
+                                            </li>
+                                        </ul>
+                                        <div class="tab-content" style="font-size:16px;">
+                                            <div class="tab-pane active" id="tools1">
+                                                <ol>
+                                                 	<li> 请<b style="font-size:18px">联系站长</b>获取苹果应用商店美国区账号，没有站长联系方式的朋友请使用<a href="{{url('tickets')}}">服务单</a> </li>
+                                                    <li> <a href="/article?id=8" target="_blank">点击此处</a>查看iPhone图文教程 </li>
+                                                </ol>
+                                            </div>
+                                            <div class="tab-pane" id="tools2">
+                                                <ol>
+                                                    <li> <a href="/article?id=7" target="_blank">点击此处</a>查看Windows图文教程</li>
+                                                </ol>
+                                            </div>
+                                            <div class="tab-pane" id="tools3">
+                                                <ol>
+                                                    <li> <a href="https://softs.wtf/?dir=%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/PC/Shadowsocks/Linux/Shadowsocks-qt5" target="_blank">点击此处</a>下载客Linux户端并启动 </li>
+                                                    <li> 单击状态栏小飞机，找到服务器->编辑订阅，复制粘贴<mark>订阅地址</mark> </li>
+                                                    <li> 更新订阅设置即可 </li>
+                                                </ol>
+                                            </div>
+                                            <div class="tab-pane" id="tools4">
+                                                 <ol>
+                                                    <li> <a href="/article?id=10" target="_blank">点击此处</a>查看Mac图文教程</li>
+                                                </ol>
+                                            </div>
+                                            <div class="tab-pane" id="tools5">
+                                                <ol>
+                                                    <li> <a href="/article?id=9" target="_blank">点击此处</a>查看安卓图文教程</li>
+                                                </ol>
+                                            </div>
+                                        </div>
+                                    </div>
+                              </div>
+                          </div>
+                      </div>
+                </div>
+              
                 <div class="row">
                     <div class="col-md-12">
                         <div class="portlet light">
                             <div class="portlet-title">
                                 <div class="caption">
-                                    <span class="caption-subject font-blue bold">{{trans('home.subscribe_address')}}</span>
+                                    <span class="caption-subject font-blue bold">订阅</span>
                                 </div>
+                              <div class="actions">
+                                <div class="btn-group btn-group-devided">
+                                    <a href="{{url('services')}}" class="btn sbold blue"> 
+                                      {{trans('home.services')}}
+                                    </a>
+                                </div>
+                              </div>
                             </div>
                             <div class="portlet-body">
-                                <div class="mt-clipboard-container" style="padding-top:0px;">
-                                    <div class="alert alert-danger">
-                                        <p> {{trans('home.subscribe_warning')}} </p>
-                                    </div>
+                                <div class="mt-clipboard-container" style="padding-top:0px;">                
                                     @if($subscribe_status)
+		                                <label><mark><b>订阅地址</b></mark></label>
                                         <input type="text" id="mt-target-1" class="form-control" value="{{$link}}" />
                                         <a href="javascript:exchangeSubscribe();" class="btn green">
                                             {{trans('home.exchange_subscribe')}}
@@ -57,79 +140,25 @@
                                         <a href="javascript:;" class="btn blue mt-clipboard" data-clipboard-action="copy" data-clipboard-target="#mt-target-1">
                                             {{trans('home.copy_subscribe_address')}}
                                         </a>
+                                		<p> {{trans('home.subscribe_warning')}} </p>                                  		
                                     @else
                                         <h3>{{trans('home.subscribe_baned')}}</h3>
                                     @endif
-
-                                    <div class="tabbable-line">
-                                        <ul class="nav nav-tabs ">
-                                            <li class="active">
-                                                <a href="#tools1" data-toggle="tab"> <i class="fa fa-apple"></i> Mac </a>
-                                            </li>
-                                            <li>
-                                                <a href="#tools2" data-toggle="tab"> <i class="fa fa-windows"></i> Windows </a>
-                                            </li>
-                                            <li>
-                                                <a href="#tools3" data-toggle="tab"> <i class="fa fa-linux"></i> Linux </a>
-                                            </li>
-                                            <li>
-                                                <a href="#tools4" data-toggle="tab"> <i class="fa fa-apple"></i> iOS </a>
-                                            </li>
-                                            <li>
-                                                <a href="#tools5" data-toggle="tab"> <i class="fa fa-android"></i> Android </a>
-                                            </li>
-                                        </ul>
-                                        <div class="tab-content" style="font-size:16px;">
-                                            <div class="tab-pane active" id="tools1">
-                                                <ol>
-                                                    <li> <a href="#" target="_blank">点击此处</a>下载客户端并启动 </li>
-                                                    <li> 单击状态栏小飞机，找到服务器->编辑订阅，复制黏贴订阅地址 </li>
-                                                    <li> 点击服务器->手动更新订阅，更新您的服务信息 </li>
-                                                    <li> 更新成功后，请在服务器菜单处选择线路，并点击打开ShadowsocksR </li>
-                                                    <li> 单击小飞机，选择PAC自动模式 </li>
-                                                </ol>
-                                            </div>
-                                            <div class="tab-pane" id="tools2">
-                                                <ol>
-                                                    <li> <a href="#" target="_blank">点击此处</a>下载客户端并启动 </li>
-                                                    <li> 单击状态栏小飞机，找到服务器->订阅->订阅设置，复制黏贴订阅地址 </li>
-                                                    <li> 点击状态栏小飞机，找到模式，选中PAC </li>
-                                                    <li> 点击状态栏小飞机，找到PAC，选中更新PAC为GFWList </li>
-                                                </ol>
-                                            </div>
-                                            <div class="tab-pane" id="tools3">
-                                                <ol>
-                                                    <li> <a href="#" target="_blank">点击此处</a>下载客户端并启动 </li>
-                                                    <li> 单击状态栏小飞机，找到服务器->编辑订阅，复制黏贴订阅地址 </li>
-                                                    <li> 更新订阅设置即可 </li>
-                                                </ol>
-                                            </div>
-                                            <div class="tab-pane" id="tools4">
-                                                <ol>
-                                                    <li> 请从站长处获取App Store美区ID及教程 </li>
-                                                </ol>
-                                            </div>
-                                            <div class="tab-pane" id="tools5">
-                                                <ol>
-                                                    <li> <a href="#" target="_blank">点击此处</a>下载客户端并启动 </li>
-                                                    <li> 单击左上角的shadowsocksR进入配置文件页，点击右下角的“+”号，点击“添加/升级SSR订阅”，填入订阅信息并保存 </li>
-                                                    <li> 选中任意一个节点，返回软件首页 </li>
-                                                    <li> 在软件首页处找到“路由”选项，并将其改为“绕过局域网及中国大陆地址” </li>
-                                                    <li> 点击右上角的小飞机图标进行连接，提示是否添加（或创建）VPN连接，点同意（或允许） </li>
-                                                </ol>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
+                             
                 @if(!$nodeList->isEmpty())
                 <div class="row widget-row">
                     <div class="col-md-12">
                         <div class="portlet light bordered">
+                          	<div class="portlet-title">
+                                <div class="caption">
+                                	<span class="caption-subject font-blue bold">节点列表</span>
+                                </div>
+                            </div>
                             <div class="portlet-body">
                                 <div class="tab-content">
                                     <div class="tab-pane active">
@@ -244,7 +273,7 @@
                     </ul>
                 @endif
 
-                <ul class="list-group">
+                <ul class="list-group" style="visibility:hidden">
                     @foreach($userLoginLog as $log)
                     <li class="list-group-item">
                         {{$log->created_at}}&ensp;{{$log->ip}}&ensp;{{$log->area}}&ensp;{{$log->isp}}
