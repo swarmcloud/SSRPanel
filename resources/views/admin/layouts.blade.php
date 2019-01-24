@@ -7,7 +7,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>@yield('title')</title>
+    <title>{{\App\Components\Helpers::systemConfig()['website_name']}}</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta content="width=device-width, initial-scale=1" name="viewport" />
     <meta content="" name="description" />
@@ -49,37 +49,33 @@
         <!-- BEGIN RESPONSIVE MENU TOGGLER -->
         <a href="javascript:;" class="menu-toggler responsive-toggler" data-toggle="collapse" data-target=".navbar-collapse"> </a>
         <!-- END RESPONSIVE MENU TOGGLER -->
-        <!-- BEGIN PAGE TOP -->
-        <div class="page-top">
-            <!-- BEGIN TOP NAVIGATION MENU -->
-            <div class="top-menu">
-                <ul class="nav navbar-nav pull-right">
-                    <li class="separator hide"> </li>
-                    <!-- BEGIN USER LOGIN DROPDOWN -->
-                    <!-- DOC: Apply "dropdown-dark" class after below "dropdown-extended" to change the dropdown styte -->
-                    <li class="dropdown dropdown-user dropdown-dark">
-                        <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
-                            <span class="username username-hide-on-mobile"> {{Session::get('user')['username']}} </span>
-                            <!-- DOC: Do not remove below empty space(&nbsp;) as its purposely used -->
-                            <img alt="" class="img-circle" src="/assets/images/avatar.png" /> </a>
-                        <ul class="dropdown-menu dropdown-menu-default">
-                            <li>
-                                <a href="{{url('/')}}"> <i class="icon-home"></i> 个人中心 </a>
-                            </li>
-                            <li>
-                                <a href="{{url('admin/profile')}}"> <i class="icon-user"></i> 个人设置 </a>
-                            </li>
-                            <li>
-                                <a href="{{url('logout')}}"> <i class="icon-key"></i> 退出 </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <!-- END USER LOGIN DROPDOWN -->
-                </ul>
-            </div>
-            <!-- END TOP NAVIGATION MENU -->
+        <!-- BEGIN TOP NAVIGATION MENU -->
+        <div class="top-menu" style="float:right">
+            <ul class="nav navbar-nav pull-right">
+                <li class="separator hide"> </li>
+                <!-- BEGIN USER LOGIN DROPDOWN -->
+                <!-- DOC: Apply "dropdown-dark" class after below "dropdown-extended" to change the dropdown styte -->
+                <li class="dropdown dropdown-user dropdown-dark">
+                    <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+                        <span class="username username-hide-on-mobile"> {{Auth::user()->username}} </span>
+                        <!-- DOC: Do not remove below empty space(&nbsp;) as its purposely used -->
+                        <img alt="" class="img-circle" src="/assets/images/avatar.png" /> </a>
+                    <ul class="dropdown-menu dropdown-menu-default">
+                        <li>
+                            <a href="{{url('/')}}"> <i class="icon-home"></i> 个人中心 </a>
+                        </li>
+                        <li>
+                            <a href="{{url('admin/profile')}}"> <i class="icon-user"></i> 个人设置 </a>
+                        </li>
+                        <li>
+                            <a href="{{url('logout')}}"> <i class="icon-key"></i> 退出 </a>
+                        </li>
+                    </ul>
+                </li>
+                <!-- END USER LOGIN DROPDOWN -->
+            </ul>
         </div>
-        <!-- END PAGE TOP -->
+        <!-- END TOP NAVIGATION MENU -->
     </div>
     <!-- END HEADER INNER -->
 </div>
@@ -152,22 +148,13 @@
                         <span class="title">订单管理</span>
                     </a>
                 </li>
-                <li class="nav-item {{in_array(Request::path(), ['admin/articleList', 'admin/addArticle', 'admin/editArticle', 'admin/articleLogList']) ? 'active open' : ''}}">
-                    <a href="javascript:;" class="nav-link nav-toggle">
+                <li class="nav-item {{in_array(Request::path(), ['admin/articleList', 'admin/addArticle', 'admin/editArticle']) ? 'active open' : ''}}">
+                    <a href="{{url('admin/articleList')}}" class="nav-link">
                         <i class="fa fa-file-word-o"></i>
                         <span class="title">文章管理</span>
-                        <span class="arrow"></span>
                     </a>
-                    <ul class="sub-menu">
-                        <li class="nav-item {{in_array(Request::path(), ['admin/articleList', 'admin/addArticle', 'admin/editArticle']) ? 'active open' : ''}}">
-                            <a href="{{url('admin/articleList')}}" class="nav-link ">
-                                <i class="fa fa-file-archive-o"></i>
-                                <span class="title">文章列表</span>
-                            </a>
-                        </li>
-                    </ul>
                 </li>
-                <li class="nav-item {{in_array(Request::path(), ['admin/userList', 'admin/addUser', 'admin/editUser', 'admin/userOrderList', 'admin/userBalanceLogList', 'admin/userTrafficLogList', 'admin/userBanLogList', 'admin/export', 'admin/userMonitor']) ? 'active open' : ''}}">
+                <li class="nav-item {{in_array(Request::path(), ['admin/userList', 'admin/addUser', 'admin/editUser', 'admin/userOrderList', 'admin/userBalanceLogList', 'admin/userTrafficLogList', 'admin/userRebateList', 'admin/userBanLogList', 'admin/export', 'admin/userMonitor', 'admin/subscribeLog', 'admin/userOnlineIPList']) ? 'active open' : ''}}">
                     <a href="javascript:;" class="nav-link nav-toggle">
                         <i class="fa fa-users"></i>
                         <span class="title">用户管理</span>
@@ -180,6 +167,18 @@
                                 <span class="title">用户列表</span>
                             </a>
                         </li>
+                        <li class="nav-item {{in_array(Request::path(), ['admin/subscribeLog']) ? 'active open' : ''}}">
+                            <a href="{{url('admin/subscribeLog')}}" class="nav-link">
+                                <i class="icon-list"></i>
+                                <span class="title">订阅管理</span>
+                            </a>
+                        </li>
+                        <li class="nav-item {{in_array(Request::path(), ['admin/userOnlineIPList']) ? 'active open' : ''}}">
+                            <a href="{{url('admin/userOnlineIPList')}}" class="nav-link">
+                                <i class="icon-list"></i>
+                                <span class="title">用户在线IP</span>
+                            </a>
+                        </li>
                         <li class="nav-item {{in_array(Request::path(), ['admin/userBalanceLogList']) ? 'active open' : ''}}">
                             <a href="{{url('admin/userBalanceLogList')}}" class="nav-link ">
                                 <i class="fa fa-money"></i>
@@ -188,8 +187,14 @@
                         </li>
                         <li class="nav-item {{in_array(Request::path(), ['admin/userTrafficLogList']) ? 'active open' : ''}}">
                             <a href="{{url('admin/userTrafficLogList')}}" class="nav-link ">
-                                <i class="fa fa-bar-chart"></i>
+                                <i class="fa fa-area-chart"></i>
                                 <span class="title">流量变动记录</span>
+                            </a>
+                        </li>
+                        <li class="nav-item {{in_array(Request::path(), ['admin/userRebateList']) ? 'active open' : ''}}">
+                            <a href="{{url('admin/userRebateList')}}" class="nav-link ">
+                                <i class="fa fa-credit-card"></i>
+                                <span class="title">返利流水记录</span>
                             </a>
                         </li>
                         <li class="nav-item {{in_array(Request::path(), ['admin/userBanLogList']) ? 'active open' : ''}}">
@@ -242,7 +247,7 @@
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item {{in_array(Request::path(), ['admin/decompile', 'admin/convert', 'admin/import', 'admin/trafficLog', 'admin/analysis', 'admin/subscribeLog', 'emailLog/logList', 'payment/callbackList', 'sensitiveWords/list', 'sensitiveWords/add']) ? 'active open' : ''}}">
+                <li class="nav-item {{in_array(Request::path(), ['admin/decompile', 'admin/convert', 'admin/import', 'admin/trafficLog', 'admin/analysis', 'admin/emailLog', 'payment/callbackList', 'sensitiveWords/list', 'sensitiveWords/add']) ? 'active open' : ''}}">
                     <a href="javascript:;" class="nav-link nav-toggle">
                         <i class="fa fa-wrench"></i>
                         <span class="title">工具箱</span>
@@ -269,32 +274,14 @@
                         </li>
                         <li class="nav-item {{in_array(Request::path(), ['admin/trafficLog']) ? 'active open' : ''}}">
                             <a href="{{url('admin/trafficLog')}}" class="nav-link">
-                                <i class="fa fa-bar-chart"></i>
+                                <i class="fa fa-area-chart"></i>
                                 <span class="title">流量日志</span>
                             </a>
                         </li>
                         <li class="nav-item {{in_array(Request::path(), ['admin/analysis']) ? 'active open' : ''}}">
                             <a href="{{url('admin/analysis')}}" class="nav-link">
-                                <i class="icon-bar-chart"></i>
+                                <i class="fa fa-bar-chart"></i>
                                 <span class="title">日志分析</span>
-                            </a>
-                        </li>
-                        <li class="nav-item {{in_array(Request::path(), ['admin/subscribeLog']) ? 'active open' : ''}}">
-                            <a href="{{url('admin/subscribeLog')}}" class="nav-link">
-                                <i class="icon-list"></i>
-                                <span class="title">订阅请求日志</span>
-                            </a>
-                        </li>
-                        <li class="nav-item {{in_array(Request::path(), ['emailLog/logList']) ? 'active open' : ''}}">
-                            <a href="{{url('emailLog/logList')}}" class="nav-link">
-                                <i class="fa fa-envelope-o"></i>
-                                <span class="title">邮件投递记录</span>
-                            </a>
-                        </li>
-                        <li class="nav-item {{in_array(Request::path(), ['payment/callbackList']) ? 'active open' : ''}}">
-                            <a href="{{url('payment/callbackList')}}" class="nav-link">
-                                <i class="fa fa-th"></i>
-                                <span class="title">有赞回调日志</span>
                             </a>
                         </li>
                         <li class="nav-item {{in_array(Request::path(), ['sensitiveWords/list', 'sensitiveWords/add']) ? 'active open' : ''}}">
@@ -303,10 +290,22 @@
                                 <span class="title">敏感词管理</span>
                             </a>
                         </li>
+                        <li class="nav-item {{in_array(Request::path(), ['admin/emailLog']) ? 'active open' : ''}}">
+                            <a href="{{url('admin/emailLog')}}" class="nav-link">
+                                <i class="fa fa-envelope-o"></i>
+                                <span class="title">邮件投递记录</span>
+                            </a>
+                        </li>
+                        <li class="nav-item {{in_array(Request::path(), ['payment/callbackList']) ? 'active open' : ''}}">
+                            <a href="{{url('payment/callbackList')}}" class="nav-link">
+                                <i class="fa fa-th"></i>
+                                <span class="title">支付回调日志</span>
+                            </a>
+                        </li>
                         <li class="nav-item {{in_array(Request::path(), ['logs']) ? 'active open' : ''}}">
                             <a href="{{url('logs')}}" class="nav-link" target="_blank">
                                 <i class="fa fa-cubes"></i>
-                                <span class="title">系统日志</span>
+                                <span class="title">系统运行日志</span>
                             </a>
                         </li>
                     </ul>
@@ -347,7 +346,7 @@
 <!-- END CONTAINER -->
 <!-- BEGIN FOOTER -->
 <div class="page-footer">
-    <div class="page-footer-inner"> 2017 - 2018 &copy; <a href="https://github.com/ssrpanel/ssrpanel" target="_blank">SSRPanel</a> </div>
+    <div class="page-footer-inner"> Copyright &copy; 2017 - 2019 <a href="https://github.com/ssrpanel/ssrpanel" target="_blank">SSRPanel</a> {{config('version.name')}} </div>
     <div class="scroll-to-top">
         <i class="icon-arrow-up"></i>
     </div>
@@ -365,6 +364,7 @@
 <script src="/assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
 <script src="/assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
 <script src="/assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
+<script src="/js/layer/layer.js" type="text/javascript"></script>
 <!-- END CORE PLUGINS -->
 <!-- BEGIN PAGE LEVEL PLUGINS -->
 @yield('script')

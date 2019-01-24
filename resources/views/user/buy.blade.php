@@ -1,9 +1,7 @@
 @extends('user.layouts')
-
 @section('css')
     <link href="/assets/pages/css/invoice-2.min.css" rel="stylesheet" type="text/css" />
 @endsection
-@section('title', trans('home.panel'))
 @section('content')
     <!-- BEGIN CONTENT BODY -->
     <div class="page-content" style="padding-top:0;">
@@ -12,55 +10,79 @@
             <div class="row invoice-body">
                 <div class="col-xs-12 table-responsive">
                     <table class="table table-hover">
-                        <thead>
-                        <tr>
-                            <th class="invoice-title"> {{trans('home.service_name')}} </th>
-                            <th class="invoice-title text-center"> {{trans('home.service_price')}} </th>
-                            <th class="invoice-title text-center"> {{trans('home.service_quantity')}} </th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td style="padding: 10px;">
-                                <h2>{{$goods->name}}</h2>
-                                每月流量：{{$goods->traffic}}
-                                <br/>
-                                {{trans('home.service_days')}} {{$goods->days}} {{trans('home.day')}}
-                            </td>
-                            <td class="text-center"> ￥{{$goods->price}} </td>
-                            <td class="text-center"> x 1 </td>
-                        </tr>
-                        </tbody>
+                        @if($goods->type == 3)
+                            <thead>
+                                <tr>
+                                    <th class="invoice-title"> {{trans('home.service_name')}} </th>
+                                    <th class="invoice-title text-center"> {{trans('home.service_price')}} </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="padding: 10px;">
+                                        <h2>{{$goods->name}}</h2>
+                                        充值金额：{{$goods->price}}元
+                                        </td>
+                                    <td class="text-center"> ￥{{$goods->price}} </td>
+                                </tr>
+                            </tbody>
+                        @else
+                            <thead>
+                                <tr>
+                                    <th class="invoice-title"> {{trans('home.service_name')}} </th>
+                                    <th class="invoice-title text-center"> {{trans('home.service_price')}} </th>
+                                    <th class="invoice-title text-center"> {{trans('home.service_quantity')}} </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="padding: 10px;">
+                                        <h2>{{$goods->name}}</h2>
+                                        {{trans('home.service_traffic')}} {{$goods->traffic_label}}
+                                        <br/>
+                                        {{trans('home.service_days')}} {{$goods->days}} {{trans('home.day')}}
+                                    </td>
+                                    <td class="text-center"> ￥{{$goods->price}} </td>
+                                    <td class="text-center"> x 1 </td>
+                                </tr>
+                            </tbody>
+                      	@endif
                     </table>
                 </div>
             </div>
-            <div class="row invoice-subtotal">
-                <div class="col-xs-3">
-                    <h2 class="invoice-title"> {{trans('home.service_subtotal_price')}} </h2>
-                    <p class="invoice-desc"> ￥{{$goods->price}} </p>
-                </div>
-                <div class="col-xs-3">
-                    <h2 class="invoice-title"> {{trans('home.service_total_price')}} </h2>
-                    <p class="invoice-desc grand-total"> ￥{{$goods->price}} </p>
-                </div>
-                <div class="col-xs-6" style="visibility:hidden">
-                    <h2 class="invoice-title"> {{trans('home.coupon')}} </h2>
-                    <p class="invoice-desc">
-                    <div class="input-group">
-                        <input class="form-control" type="text" name="coupon_sn" id="coupon_sn" placeholder="{{trans('home.coupon')}}" />
-                        <span class="input-group-btn">
-                            <button class="btn btn-default" type="button" onclick="redeemCoupon()"><i class="fa fa-refresh"></i> {{trans('home.redeem_coupon')}} </button>
-                        </span>
+            @if($goods->type <= 2)
+                <div class="row invoice-subtotal">
+                    <div class="col-xs-3">
+                        <h2 class="invoice-title"> {{trans('home.service_subtotal_price')}} </h2>
+                        <p class="invoice-desc"> ￥{{$goods->price}} </p>
                     </div>
-                    </p>
+                    <div class="col-xs-3">
+                        <h2 class="invoice-title"> {{trans('home.service_total_price')}} </h2>
+                        <p class="invoice-desc grand-total"> ￥{{$goods->price}} </p>
+                    </div>
+                    <div class="col-xs-6">
+                        <h2 class="invoice-title"> {{trans('home.coupon')}} </h2>
+                        <p class="invoice-desc">
+                            <div class="input-group">
+                                <input class="form-control" type="text" name="coupon_sn" id="coupon_sn" placeholder="{{trans('home.coupon')}}" />
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="button" onclick="redeemCoupon()"><i class="fa fa-refresh"></i> {{trans('home.redeem_coupon')}} </button>
+                                </span>
+                            </div>
+                        </p>
+                    </div>
                 </div>
-            </div>
+            @endif
             <div class="row">
                 <div class="col-xs-12" style="text-align: right;">
                     @if($is_youzan)
-                        <a class="btn btn-lg red hidden-print" onclick="onlinePay()"> {{trans('home.online_pay')}} </a>
+                        <a class="btn btn-lg red hidden-print" onclick="onlinePay(0)"> {{trans('home.online_pay')}} </a>
+                    @elseif($is_alipay)
+                        <a class="btn btn-lg green hidden-print" onclick="onlinePay(4)"> 支付宝扫码 </a>
                     @endif
-                    <a class="btn btn-lg blue hidden-print uppercase" onclick="pay()"> {{trans('home.service_pay_button')}} </a>
+                  	@if($goods->type <= 2)
+                        <a class="btn btn-lg blue hidden-print uppercase" onclick="pay()"> {{trans('home.service_pay_button')}} </a>
+                  	@endif
                 </div>
             </div>
         </div>
@@ -69,8 +91,6 @@
     <!-- END CONTENT BODY -->
 @endsection
 @section('script')
-    <script src="/js/layer/layer.js" type="text/javascript"></script>
-
     <script type="text/javascript">
         // 校验优惠券是否可用
         function redeemCoupon() {
@@ -119,7 +139,7 @@
         }
 
         // 在线支付
-        function onlinePay() {
+        function onlinePay(pay_type) {
             var goods_id = '{{$goods->id}}';
             var coupon_sn = $('#coupon_sn').val();
 
@@ -131,7 +151,7 @@
                 type: "POST",
                 url: "{{url('payment/create')}}",
                 async: false,
-                data: {_token:'{{csrf_token()}}', goods_id:goods_id, coupon_sn:coupon_sn},
+                data: {_token:'{{csrf_token()}}', goods_id:goods_id, coupon_sn:coupon_sn, pay_type:pay_type},
                 dataType: 'json',
                 beforeSend: function () {
                     index = layer.load(1, {
@@ -141,9 +161,15 @@
                 success: function (ret) {
                     layer.msg(ret.message, {time:1300}, function() {
                         if (ret.status == 'success') {
-                            window.location.href = '{{url('payment')}}' + "/" + ret.data;
+                            if (pay_type==4) {
+                                // 如果是Alipay支付写入Alipay的支付页面
+                                document.body.innerHTML += ret.data;
+                                document.forms['alipaysubmit'].submit();
+                            } else {
+                                window.location.href = '{{url('payment')}}' + "/" + ret.data;
+                            }
                         } else {
-                            layer.close(index);
+                            window.location.href = '{{url('invoices')}}';
                         }
                     });
                 }

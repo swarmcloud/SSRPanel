@@ -8,6 +8,7 @@ use Response;
 
 /**
  * 敏感词管理控制器
+ *
  * Class SensitiveWordsController
  *
  * @package App\Http\Controllers
@@ -19,7 +20,7 @@ class SensitiveWordsController extends Controller
     {
         $view['list'] = SensitiveWords::query()->paginate(15);
 
-        return Response::view('sensitiveWords/sensitiveWordsList', $view);
+        return Response::view('sensitiveWords.sensitiveWordsList', $view);
     }
 
     // 添加敏感词

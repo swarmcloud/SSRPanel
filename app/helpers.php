@@ -102,6 +102,25 @@ if (!function_exists('formatBytes')) {
     }
 }
 
+// 秒转时间
+if (!function_exists('seconds2time')) {
+    function seconds2time($seconds)
+    {
+        $day = floor($seconds / (3600 * 24));
+        $hour = floor(($seconds % (3600 * 24)) / 3600);
+        $minute = floor((($seconds % (3600 * 24)) % 3600) / 60);
+        if ($day > 0) {
+            return $day . '天' . $hour . '小时' . $minute . '分';
+        } else {
+            if ($hour != 0) {
+                return $hour . '小时' . $minute . '分';
+            } else {
+                return $minute . '分';
+            }
+        }
+    }
+}
+
 // 获取访客真实IP
 if (!function_exists('getClientIP')) {
     function getClientIP()
@@ -125,6 +144,7 @@ if (!function_exists('getClientIP')) {
                 $ip = 'unknown';
             }
         } else {
+            // 绕过CDN获取真实访客IP
             if (getenv('HTTP_X_FORWARDED_FOR')) {
                 $ip = getenv('HTTP_X_FORWARDED_FOR');
             } elseif (getenv('HTTP_CLIENT_ip')) {
@@ -139,5 +159,81 @@ if (!function_exists('getClientIP')) {
         }
 
         return $ip;
+    }
+}
+
+// 获取IPv6信息
+if (!function_exists('getIPv6')) {
+    /*
+     * {
+     *     "longitude": 105,
+     *     "latitude": 35,
+     *     "area_code": "0",
+     *     "dma_code": "0",
+     *     "organization": "AS23910 China Next Generation Internet CERNET2",
+     *     "country": "China",
+     *     "ip": "2001:da8:202:10::36",
+     *     "country_code3": "CHN",
+     *     "continent_code": "AS",
+     *     "country_code": "CN"
+     * }
+     *
+     * {
+     *     "longitude": 105,
+     *     "latitude": 35,
+     *     "area_code": "0",
+     *     "dma_code": "0",
+     *     "organization": "AS9808 Guangdong Mobile Communication Co.Ltd.",
+     *     "country": "China",
+     *     "ip": "2409:8a74:487:1f30:5178:e5a5:1f36:3525",
+     *     "country_code3": "CHN",
+     *     "continent_code": "AS",
+     *     "country_code": "CN"
+     * }
+     */
+    function getIPv6($ip)
+    {
+        $url = 'https://api.ip.sb/geoip/' . $ip;
+
+        try {
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_POST, 0);
+
+            $result = curl_exec($ch);
+            curl_close($ch);
+
+            $result = json_decode($result, true);
+            if (!is_array($result) || isset($result['code'])) {
+                throw new Exception('解析IPv6异常：' . $ip);
+            }
+
+            return $result;
+        } catch (\Exception $e) {
+            \Log::error($e->getMessage());
+
+            return [];
+        }
+    }
+}
+
+// 随机UUID
+if (!function_exists('createGuid')) {
+    function createGuid()
+    {
+        mt_srand((double)microtime() * 10000);
+        $charid = strtoupper(md5(uniqid(rand(), true)));
+        $hyphen = chr(45);
+        $uuid = substr($charid, 0, 8) . $hyphen
+            . substr($charid, 8, 4) . $hyphen
+            . substr($charid, 12, 4) . $hyphen
+            . substr($charid, 16, 4) . $hyphen
+            . substr($charid, 20, 12);
+
+        return strtolower($uuid);
     }
 }

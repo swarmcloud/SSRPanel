@@ -1,10 +1,8 @@
 @extends('user.layouts')
-
 @section('css')
     <link href="/assets/global/plugins/datatables/datatables.min.css" rel="stylesheet" type="text/css" />
     <link href="/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css" rel="stylesheet" type="text/css" />
 @endsection
-@section('title', trans('home.panel'))
 @section('content')
     <!-- BEGIN CONTENT BODY -->
     <div class="page-content" style="padding-top:0;">
@@ -94,8 +92,6 @@
     <!-- END CONTENT BODY -->
 @endsection
 @section('script')
-    <script src="/js/layer/layer.js" type="text/javascript"></script>
-
     <script type="text/javascript">
         // 发起工单
         function addTicket() {
@@ -103,12 +99,12 @@
             var content = $("#content").val();
 
             if (title == '' || title == undefined) {
-                bootbox.alert('工单标题不能为空');
+                layer.alert('您未填写工单标题', {icon: 2, title:'提示'});
                 return false;
             }
 
             if (content == '' || content == undefined) {
-                bootbox.alert('工单内容不能为空');
+                layer.alert('您未填写工单内容', {icon: 2, title:'提示'});
                 return false;
             }
 

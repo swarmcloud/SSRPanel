@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Components\Helpers;
 use Illuminate\Console\Command;
-use App\Http\Models\Config;
 use App\Http\Models\Order;
 use App\Http\Models\User;
 use App\Http\Models\UserLabel;
@@ -15,24 +15,36 @@ class AutoDecGoodsTraffic extends Command
 {
     protected $signature = 'autoDecGoodsTraffic';
     protected $description = '自动扣减用户到期商品的流量';
+    protected static $systemConfig;
 
     public function __construct()
     {
         parent::__construct();
+        self::$systemConfig = Helpers::systemConfig();
     }
 
     public function handle()
     {
         $jobStartTime = microtime(true);
 
+        // 扣减用户到期商品的流量
+        $this->decGoodsTraffic();
+
+        $jobEndTime = microtime(true);
+        $jobUsedTime = round(($jobEndTime - $jobStartTime), 4);
+
+        Log::info('执行定时任务【' . $this->description . '】，耗时' . $jobUsedTime . '秒');
+    }
+
+    // 扣减用户到期商品的流量
+    private function decGoodsTraffic()
+    {
         $orderList = Order::query()->with(['user', 'goods'])->where('status', 2)->where('is_expire', 0)->where('expire_at', '<', date('Y-m-d H:i:s'))->get();
         if (!$orderList->isEmpty()) {
-            $config = $this->systemConfig();
-
             // 用户默认标签
             $defaultLabels = [];
-            if ($config['initial_labels_for_user']) {
-                $defaultLabels = explode(',', $config['initial_labels_for_user']);
+            if (self::$systemConfig['initial_labels_for_user']) {
+                $defaultLabels = explode(',', self::$systemConfig['initial_labels_for_user']);
             }
 
             DB::beginTransaction();
@@ -45,8 +57,14 @@ class AutoDecGoodsTraffic extends Command
                     }
 
                     if ($order->user->transfer_enable - $order->goods->traffic * 1048576 <= 0) {
+                        // 写入用户流量变动记录
+                        Helpers::addUserTrafficModifyLog($order->user_id, $order->oid, $order->user->transfer_enable, 0, '[定时任务]用户所购商品到期，扣减商品对应的流量(扣完并重置)');
+
                         User::query()->where('id', $order->user_id)->update(['u' => 0, 'd' => 0, 'transfer_enable' => 0]);
                     } else {
+                        // 写入用户流量变动记录
+                        Helpers::addUserTrafficModifyLog($order->user_id, $order->oid, $order->user->transfer_enable, ($order->goods->traffic * 1048576), '[定时任务]用户所购商品到期，扣减商品对应的流量(没扣完)');
+
                         User::query()->where('id', $order->user_id)->decrement('transfer_enable', $order->goods->traffic * 1048576);
 
                         // 处理已用流量
@@ -87,22 +105,5 @@ class AutoDecGoodsTraffic extends Command
                 DB::rollBack();
             }
         }
-
-        $jobEndTime = microtime(true);
-        $jobUsedTime = round(($jobEndTime - $jobStartTime), 4);
-
-        Log::info('执行定时任务【' . $this->description . '】，耗时' . $jobUsedTime . '秒');
-    }
-
-    // 系统配置
-    private function systemConfig()
-    {
-        $config = Config::query()->get();
-        $data = [];
-        foreach ($config as $vo) {
-            $data[$vo->name] = $vo->value;
-        }
-
-        return $data;
     }
 }

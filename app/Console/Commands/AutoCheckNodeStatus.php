@@ -2,10 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\Components\Helpers;
 use Illuminate\Console\Command;
 use App\Components\ServerChan;
-use App\Http\Models\Config;
-use App\Http\Models\EmailLog;
 use App\Http\Models\SsNode;
 use App\Http\Models\SsNodeInfo;
 use App\Mail\nodeCrashWarning;
@@ -17,12 +16,12 @@ class AutoCheckNodeStatus extends Command
 {
     protected $signature = 'autoCheckNodeStatus';
     protected $description = '自动检测节点状态';
-    protected static $config;
+    protected static $systemConfig;
 
     public function __construct()
     {
         parent::__construct();
-        self::$config = $this->systemConfig();
+        self::$systemConfig = Helpers::systemConfig();
     }
 
     public function handle()
@@ -30,8 +29,14 @@ class AutoCheckNodeStatus extends Command
         $jobStartTime = microtime(true);
 
         // 监测节点状态
-        if (self::$config['is_tcp_check']) {
-            $this->checkNodes();
+        if (self::$systemConfig['is_tcp_check']) {
+            if (!Cache::has('tcp_check_time')) {
+                $this->checkNodes();
+            } elseif (Cache::get('tcp_check_time') <= time()) {
+                $this->checkNodes();
+            } else {
+                Log::info('下次TCP阻断检测时间：' . date('Y-m-d H:i:s', Cache::get('tcp_check_time')));
+            }
         }
 
         $jobEndTime = microtime(true);
@@ -45,7 +50,7 @@ class AutoCheckNodeStatus extends Command
     {
         $title = "节点异常警告";
 
-        $nodeList = SsNode::query()->where('status', 1)->where('is_tcp_check',1)->get();
+        $nodeList = SsNode::query()->where('status', 1)->where('is_tcp_check', 1)->where('is_nat', 0)->get();
         foreach ($nodeList as $node) {
             $tcpCheck = $this->tcpCheck($node->ip);
             if (false !== $tcpCheck) {
@@ -66,22 +71,22 @@ class AutoCheckNodeStatus extends Command
 
                 // 异常才发通知消息
                 if ($tcpCheck) {
-                    if (self::$config['tcp_check_warning_times']) {
+                    if (self::$systemConfig['tcp_check_warning_times']) {
                         // 已通知次数
                         $cacheKey = 'tcp_check_warning_times_' . $node->id;
                         if (Cache::has($cacheKey)) {
                             $times = Cache::get($cacheKey);
                         } else {
-                            Cache::put($cacheKey, 1, 725); // 因为每小时检测一次，最多设置提醒12次，12*60=720分钟缓存时效，多5分钟防止异常
+                            Cache::put($cacheKey, 1, 725); // 最多设置提醒12次，12*60=720分钟缓存时效，多5分钟防止异常
                             $times = 1;
                         }
 
-                        if ($times < self::$config['tcp_check_warning_times']) {
-                            Cache::increment('tcp_check_warning_times_' . $node->id);
+                        if ($times < self::$systemConfig['tcp_check_warning_times']) {
+                            Cache::increment($cacheKey);
 
                             $this->notifyMaster($title, "节点**{$node->name}【{$node->ip}】**：**" . $text . "**", $node->name, $node->server);
-                        } elseif ($times >= self::$config['tcp_check_warning_times']) {
-                            Cache::forget('tcp_check_warning_times_' . $node->id);
+                        } elseif ($times >= self::$systemConfig['tcp_check_warning_times']) {
+                            Cache::forget($cacheKey);
                             SsNode::query()->where('id', $node->id)->update(['status' => 0]);
 
                             $this->notifyMaster($title, "节点**{$node->name}【{$node->ip}】**：**" . $text . "**，节点自动进入维护状态", $node->name, $node->server);
@@ -99,10 +104,11 @@ class AutoCheckNodeStatus extends Command
             if ($tcpCheck !== 1 && !$nodeTTL) {
                 $this->notifyMaster($title, "节点**{$node->name}【{$node->ip}】**异常：**心跳异常**", $node->name, $node->server);
             }
-
-            // 天若有情天亦老，我为长者续一秒
-            sleep(1);
         }
+
+        // 随机生成下次检测时间
+        $nextCheckTime = time() + mt_rand(1800, 3600);
+        Cache::put('tcp_check_time', $nextCheckTime, 60);
     }
 
     /**
@@ -114,11 +120,17 @@ class AutoCheckNodeStatus extends Command
      */
     private function tcpCheck($ip)
     {
-        $url = 'https://ipcheck.need.sh/api_v2.php?ip=' . $ip;
-        $ret = $this->curlRequest($url);
-        $ret = json_decode($ret);
-        if (!$ret || $ret->result != 'success') {
-            Log::warning("【TCP阻断检测】ipcheck.need.sh的TCP阻断检测接口挂了");
+        try {
+            $url = 'https://ipcheck.need.sh/api_v2.php?ip=' . $ip;
+            $ret = $this->curlRequest($url);
+            $ret = json_decode($ret);
+            if (!$ret || $ret->result != 'success') {
+                Log::warning("【TCP阻断检测】检测" . $ip . "时，接口返回异常");
+
+                return false;
+            }
+        } catch (\Exception $e) {
+            Log::warning("【TCP阻断检测】检测" . $ip . "时，接口请求超时");
 
             return false;
         }
@@ -141,11 +153,13 @@ class AutoCheckNodeStatus extends Command
      * @param string $content    消息内容
      * @param string $nodeName   节点名称
      * @param string $nodeServer 节点域名
+     *
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     private function notifyMaster($title, $content, $nodeName, $nodeServer)
     {
         $this->notifyMasterByEmail($title, $content, $nodeName, $nodeServer);
-        $this->notifyMasterByServerchan($title, $content);
+        ServerChan::send($title, $content);
     }
 
     /**
@@ -158,61 +172,14 @@ class AutoCheckNodeStatus extends Command
      */
     private function notifyMasterByEmail($title, $content, $nodeName, $nodeServer)
     {
-        if (self::$config['is_node_crash_warning'] && self::$config['crash_warning_email']) {
+        if (self::$systemConfig['is_node_crash_warning'] && self::$systemConfig['crash_warning_email']) {
             try {
-                Mail::to(self::$config['crash_warning_email'])->send(new nodeCrashWarning(self::$config['website_name'], $nodeName, $nodeServer));
-                $this->addEmailLog(1, $title, $content);
+                Mail::to(self::$systemConfig['crash_warning_email'])->send(new nodeCrashWarning($nodeName, $nodeServer));
+                Helpers::addEmailLog(self::$systemConfig['crash_warning_email'], $title, $content);
             } catch (\Exception $e) {
-                $this->addEmailLog(1, $title, $content, 0, $e->getMessage());
+                Helpers::addEmailLog(self::$systemConfig['crash_warning_email'], $title, $content, 0, $e->getMessage());
             }
         }
-    }
-
-    /**
-     * 通过ServerChan发微信消息提醒管理员
-     *
-     * @param string $title   消息标题
-     * @param string $content 消息内容
-     */
-    private function notifyMasterByServerchan($title, $content)
-    {
-        if (self::$config['is_server_chan'] && self::$config['server_chan_key']) {
-            $serverChan = new ServerChan();
-            $serverChan->send($title, $content);
-        }
-    }
-
-    /**
-     * 添加邮件发送日志
-     *
-     * @param int    $userId  接收者用户ID
-     * @param string $title   标题
-     * @param string $content 内容
-     * @param int    $status  投递状态
-     * @param string $error   投递失败时记录的异常信息
-     */
-    private function addEmailLog($userId, $title, $content, $status = 1, $error = '')
-    {
-        $emailLogObj = new EmailLog();
-        $emailLogObj->user_id = $userId;
-        $emailLogObj->title = $title;
-        $emailLogObj->content = $content;
-        $emailLogObj->status = $status;
-        $emailLogObj->error = $error;
-        $emailLogObj->created_at = date('Y-m-d H:i:s');
-        $emailLogObj->save();
-    }
-
-    // 系统配置
-    private function systemConfig()
-    {
-        $config = Config::query()->get();
-        $data = [];
-        foreach ($config as $vo) {
-            $data[$vo->name] = $vo->value;
-        }
-
-        return $data;
     }
 
     /**
@@ -229,17 +196,15 @@ class AutoCheckNodeStatus extends Command
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 500);
-        // 为保证第三方服务器与微信服务器之间数据传输的安全性，所有微信接口采用https方式调用，必须使用下面2行代码打开ssl安全校验。
-        // 如果在部署过程中代码在此处验证失败，请到 http://curl.haxx.se/ca/cacert.pem 下载新的证书判别文件。
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Accept: application/json', // 请求报头
-            'Content-Type: application/json', // 实体报头
-            'Content-Length: ' . strlen($data)
-        ]);
+//        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+//            'Accept: application/json', // 请求报头
+//            'Content-Type: application/json', // 实体报头
+//            'Content-Length: ' . strlen($data)
+//        ]);
 
         // 如果data有数据，则用POST请求
         if ($data) {

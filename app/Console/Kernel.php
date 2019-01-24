@@ -13,7 +13,6 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        \App\Console\Commands\AutoAuditOrders::class,
         \App\Console\Commands\AutoJob::class,
         \App\Console\Commands\AutoClearLog::class,
         \App\Console\Commands\AutoDecGoodsTraffic::class,
@@ -26,6 +25,9 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\UserTrafficAbnormalAutoWarning::class,
         \App\Console\Commands\UserExpireAutoWarning::class,
         \App\Console\Commands\UserTrafficAutoWarning::class,
+        \App\Console\Commands\upgradeUserPassword::class,
+        \App\Console\Commands\upgradeUserVmessId::class,
+        \App\Console\Commands\AutoReportNode::class,
     ];
 
     /**
@@ -37,12 +39,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('autoAuditOrders')->everyMinute();
         $schedule->command('autoJob')->everyMinute();
         $schedule->command('autoClearLog')->everyThirtyMinutes();
         $schedule->command('autoDecGoodsTraffic')->everyTenMinutes();
         $schedule->command('autoResetUserTraffic')->daily();
-        $schedule->command('autoCheckNodeStatus')->hourly();
+        $schedule->command('autoCheckNodeStatus')->everyMinute();
         $schedule->command('autoStatisticsNodeDailyTraffic')->dailyAt('23:55');
         $schedule->command('autoStatisticsNodeHourlyTraffic')->hourly();
         $schedule->command('autoStatisticsUserDailyTraffic')->dailyAt('23:50');
@@ -50,15 +51,18 @@ class Kernel extends ConsoleKernel
         $schedule->command('userTrafficAbnormalAutoWarning')->hourly();
         $schedule->command('userExpireAutoWarning')->dailyAt('20:00');
         $schedule->command('userTrafficAutoWarning')->dailyAt('10:30');
+        $schedule->command('autoReportNode')->dailyAt('09:00');
     }
 
     /**
-     * Register the Closure based commands for the application.
+     * Register the commands for the application.
      *
      * @return void
      */
     protected function commands()
     {
+        $this->load(__DIR__.'/Commands');
+
         require base_path('routes/console.php');
     }
 }

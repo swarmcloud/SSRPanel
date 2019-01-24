@@ -2,83 +2,58 @@
 
 namespace App\Components;
 
-use App\Http\Models\Config;
 use App\Http\Models\EmailLog;
-use GuzzleHttp\Client;
-use GuzzleHttp\Psr7;
-use GuzzleHttp\Exception\RequestException;
 use Log;
 
 class ServerChan
 {
-    protected static $config;
-
-    function __construct()
-    {
-        self::$config = $this->systemConfig();
-    }
-
     /**
-     * @param string $title 消息标题
+     * 推送消息
+     *
+     * @param string $title   消息标题
      * @param string $content 消息内容
-     * @return string
+     *
+     * @return mixed
      */
-    public function send($title, $content)
+    public static function send($title, $content)
     {
-        $client = new Client();
-
-        try {
-            $response = $client->request('GET', 'https://sc.ftqq.com/' . self::$config['server_chan_key'] . '.send', [
-                'query' => [
-                    'text' => $title,
-                    'desp' => $content
-                ]
-            ]);
-
-            $result = json_decode($response->getBody());
-            if (!$result->errno) {
-                $this->addEmailLog(1, '[ServerChan]' . $title, $content);
-            } else {
-                $this->addEmailLog(1, '[ServerChan]' . $title, $content, 0, $result->errmsg);
-            }
-        } catch (RequestException $e) {
-            Log::error(Psr7\str($e->getRequest()));
-            if ($e->hasResponse()) {
-                Log::error(Psr7\str($e->getResponse()));
+        if (Helpers::systemConfig()['is_server_chan'] && Helpers::systemConfig()['server_chan_key']) {
+            try {
+                $url = 'https://sc.ftqq.com/' . Helpers::systemConfig()['server_chan_key'] . '.send?text=' . $title . '&desp=' . urlencode($content);
+                $response = Curl::send($url);
+                $result = json_decode($response);
+                if (!$result->errno) {
+                    self::addLog($title, $content);
+                } else {
+                    self::addLog($title, $content, 0, $result->errmsg);
+                }
+            } catch (\Exception $e) {
+                Log::error($e);
             }
         }
     }
 
     /**
-     * 写入邮件发送日志
+     * 添加serverChan投递日志
      *
-     * @param int    $user_id 用户ID
      * @param string $title   标题
      * @param string $content 内容
      * @param int    $status  投递状态
      * @param string $error   投递失败时记录的异常信息
+     *
+     * @return int
      */
-    private function addEmailLog($user_id, $title, $content, $status = 1, $error = '')
+    private static function addLog($title, $content, $status = 1, $error = '')
     {
-        $emailLogObj = new EmailLog();
-        $emailLogObj->user_id = $user_id;
-        $emailLogObj->title = $title;
-        $emailLogObj->content = $content;
-        $emailLogObj->status = $status;
-        $emailLogObj->error = $error;
-        $emailLogObj->created_at = date('Y-m-d H:i:s');
-        $emailLogObj->save();
-    }
+        $log = new EmailLog();
+        $log->type = 2;
+        $log->address = 'admin';
+        $log->title = $title;
+        $log->content = $content;
+        $log->status = $status;
+        $log->error = $error;
+        $log->created_at = date('Y-m-d H:i:s');
 
-    // 系统配置
-    private function systemConfig()
-    {
-        $config = Config::query()->get();
-        $data = [];
-        foreach ($config as $vo) {
-            $data[$vo->name] = $vo->value;
-        }
-
-        return $data;
+        return $log->save();
     }
 }

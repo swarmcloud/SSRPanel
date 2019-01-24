@@ -13,7 +13,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        // 检测是否强制跳转https
+        if (env('REDIRECT_HTTPS', false)) {
+            \URL::forceScheme('https');
+        }
+
+        //\Schema::defaultStringLength(191);
     }
 
     /**
@@ -23,6 +28,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        if ($this->app->environment() !== 'production') {
+            $this->app->register(\Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
+        }
     }
 }
