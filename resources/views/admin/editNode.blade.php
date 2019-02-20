@@ -245,7 +245,7 @@
                                                     <div class="col-md-8">
                                                         <div class="mt-radio-inline">
                                                             <label class="mt-radio">
-                                                                <input type="radio" name="service" value="1" @if($node->type == 1) checked @endif> ShadowsocksR
+                                                                <input type="radio" name="service" value="1" @if($node->type == 1) checked @endif> Shadowsocks(R)
                                                                 <span></span>
                                                             </label>
                                                             <label class="mt-radio">
@@ -541,7 +541,7 @@
             var single_obfs = $('#single_obfs').val();
             var sort = $('#sort').val();
             var status = $("input:radio[name='status']:checked").val();
-            var is_tcp_check = $('#is_tcp_check').val();
+            var is_tcp_check = $("input:radio[name='is_tcp_check']:checked").val();
 
             var service = $("input:radio[name='service']:checked").val();
             var v2_alter_id = $('#v2_alter_id').val();

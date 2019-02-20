@@ -141,9 +141,9 @@ class Helpers
         $log->content = $content;
         $log->status = $status;
         $log->error = $error;
-        $log->created_at = date('Y-m-d H:i:s');
+        $log->save();
 
-        return $log->save();
+        return $log->id;
     }
 
     /**

@@ -381,7 +381,6 @@ class UserController extends Controller
         $obj->title = $title;
         $obj->content = $content;
         $obj->status = 0;
-        $obj->created_at = date('Y-m-d H:i:s');
         $obj->save();
 
         if ($obj->id) {
@@ -390,12 +389,8 @@ class UserController extends Controller
 
             // 发邮件通知管理员
             if (self::$systemConfig['crash_warning_email']) {
-                try {
-                    Mail::to(self::$systemConfig['crash_warning_email'])->send(new newTicket($emailTitle, $content));
-                    Helpers::addEmailLog(self::$systemConfig['crash_warning_email'], $emailTitle, $content);
-                } catch (\Exception $e) {
-                    Helpers::addEmailLog(self::$systemConfig['crash_warning_email'], $emailTitle, $content, 0, $e->getMessage());
-                }
+                $logId = Helpers::addEmailLog(self::$systemConfig['crash_warning_email'], $emailTitle, $content);
+                Mail::to(self::$systemConfig['crash_warning_email'])->send(new newTicket($logId, $emailTitle, $content));
             }
 
             ServerChan::send($emailTitle, $content);
@@ -411,6 +406,11 @@ class UserController extends Controller
     {
         $id = intval($request->get('id'));
 
+        $ticket = Ticket::query()->with('user')->where('id', $id)->first();
+        if (empty($ticket) || $ticket->user_id != Auth::user()->id) {
+            return Redirect::to('tickets');
+        }
+
         if ($request->method() == 'POST') {
             $content = clean($request->get('content'));
             $content = str_replace("eval", "", str_replace("atob", "", $content));
@@ -424,23 +424,20 @@ class UserController extends Controller
             $obj->ticket_id = $id;
             $obj->user_id = Auth::user()->id;
             $obj->content = $content;
-            $obj->created_at = date('Y-m-d H:i:s');
             $obj->save();
 
             if ($obj->id) {
-                $ticket = Ticket::query()->where('id', $id)->first();
+                // 重新打开工单
+                $ticket->status = 0;
+                $ticket->save();
 
                 $title = "工单回复提醒";
                 $content = "标题：【" . $ticket->title . "】<br>用户回复：" . $content;
 
                 // 发邮件通知管理员
                 if (self::$systemConfig['crash_warning_email']) {
-                    try {
-                        Mail::to(self::$systemConfig['crash_warning_email'])->send(new replyTicket($title, $content));
-                        Helpers::addEmailLog(self::$systemConfig['crash_warning_email'], $title, $content);
-                    } catch (\Exception $e) {
-                        Helpers::addEmailLog(self::$systemConfig['crash_warning_email'], $title, $content, 0, $e->getMessage());
-                    }
+                    $logId = Helpers::addEmailLog(self::$systemConfig['crash_warning_email'], $title, $content);
+                    Mail::to(self::$systemConfig['crash_warning_email'])->send(new replyTicket($logId, $title, $content));
                 }
 
                 ServerChan::send($title, $content);
@@ -450,11 +447,6 @@ class UserController extends Controller
                 return Response::json(['status' => 'fail', 'data' => '', 'message' => '回复失败']);
             }
         } else {
-            $ticket = Ticket::query()->where('id', $id)->with('user')->first();
-            if (empty($ticket) || $ticket->user_id != Auth::user()->id) {
-                return Redirect::to('tickets');
-            }
-
             $view['ticket'] = $ticket;
             $view['replyList'] = TicketReply::query()->where('ticket_id', $id)->with('user')->orderBy('id', 'asc')->get();
 
@@ -469,6 +461,8 @@ class UserController extends Controller
 
         $ret = Ticket::query()->where('id', $id)->where('user_id', Auth::user()->id)->update(['status' => 2]);
         if ($ret) {
+            ServerChan::send('工单关闭提醒', '工单：ID' . $id . '客户已手动关闭');
+
             return Response::json(['status' => 'success', 'data' => '', 'message' => '关闭成功']);
         } else {
             return Response::json(['status' => 'fail', 'data' => '', 'message' => '关闭失败']);
@@ -525,11 +519,13 @@ class UserController extends Controller
             return Response::json(['status' => 'fail', 'data' => '', 'message' => '该优惠券已使用，请换一个试试']);
         } elseif ($coupon->status == 2) {
             return Response::json(['status' => 'fail', 'data' => '', 'message' => '该优惠券已失效，请换一个试试']);
-        } elseif ($coupon->available_start > time() || $coupon->available_end < time()) {
+        } elseif ($coupon->available_end < time()) {
             $coupon->status = 2;
             $coupon->save();
 
             return Response::json(['status' => 'fail', 'data' => '', 'message' => '该优惠券已失效，请换一个试试']);
+        } elseif ($coupon->available_start > time()) {
+            return Response::json(['status' => 'fail', 'data' => '', 'message' => '该优惠券尚不可用，请换一个试试']);
         }
 
         $data = [
@@ -760,6 +756,7 @@ class UserController extends Controller
             $view['goods'] = $goods;
             $view['is_youzan'] = self::$systemConfig['is_youzan'];
             $view['is_alipay'] = self::$systemConfig['is_alipay'];
+            $view['is_f2fpay'] = self::$systemConfig['is_f2fpay'];
 
             return Response::view('user.buy', $view);
         }
