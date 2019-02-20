@@ -313,7 +313,7 @@
                         </div>
                     </div>
                 @endif
-                <div class="portlet light portlet-fit bordered">
+                <div class="portlet light portlet-fit bordered" style="display:none">
                     <div class="portlet-title">
                         <div class="caption">
                             <span class="caption-subject font-blue sbold uppercase">{{trans('home.account_login_log')}}</span>
@@ -378,6 +378,13 @@
                                         <input type="text" class="form-control" name="charge_coupon" id="charge_coupon" placeholder="{{trans('home.please_input_coupon')}}">
                                     </div>
                                 </div>
+                              	<div class="form-group" style="display:none">
+                                	<label class="col-md-4 control-label">充值券购买地址:</label>
+                                 	<div class="col-md-6">
+                                      <div style="text-align:left" class="control-label"><a href="http://t.cn/EtviKdv" target="_blank">http://t.cn/EtviKdv</a></div>
+                                  	</div>
+                              	</div>
+                            	
                             </div>
                         </form>
                     </div>

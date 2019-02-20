@@ -68,12 +68,9 @@
                                 <tr style="padding:0;text-align:left;vertical-align:top">
                                     <th style="Margin:0;color:#333;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:400;line-height:19px;margin:0;padding:0;text-align:left">
                                         <div class="release" style="padding-top:5px;padding-left:20px;padding-bottom:20px;">
-<<<<<<< HEAD
-                                          	<p>这是一封来自 <a href="https://www.kelvinsladder.xyz" target="_blank">{{$websiteName}}</a> 的账号过期提醒。</p>
+                                          	<p>这是一封来自 <a href="https://www.kelvinsladder.xyz" target="_blank">{{\App\Components\Helpers::systemConfig()['website_name']}}</a> 的账号过期提醒。</p>
                                             <p>您的账号【{{$lastCanUseDays}}】天后即将过期，为了确保您可要继续正常享受我们的服务，请及时续期。</p>
-=======
-                                            <p>您的账号【{{$lastCanUseDays}}】天后即将过期，为了确保您可以继续正常使用我们的服务，请及时续费。</p>
->>>>>>> upstream/master
+
                                         </div>
                                     </th>
                                     <th class="expander" style="Margin:0;color:#333;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:400;line-height:19px;margin:0;padding:0!important;text-align:left;visibility:hidden;width:0"></th>

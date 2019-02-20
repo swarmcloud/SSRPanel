@@ -84,6 +84,12 @@
                         <a class="btn btn-lg blue hidden-print uppercase" onclick="pay()"> {{trans('home.service_pay_button')}} </a>
                   	@endif
                 </div>
+            	<div class="col-xs-12" style="display:none; text-align: right;">
+                  请先在<a href="http://t.cn/EtviKdv" target="_blank">此处购买充值券</a>，然后到<a href="https://www.kelvinsladder.xyz">个人中心</a>充值
+				</div>
+				<div class="col-xs-12" style="text-align: right;">
+                  由于支付渠道变更，暂时关闭在线支付，如需充值请联系站长,微信号kelvinsladder
+				</div>
             </div>
         </div>
         <!-- END PAGE BASE CONTENT -->

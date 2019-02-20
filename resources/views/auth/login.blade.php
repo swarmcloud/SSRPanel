@@ -10,6 +10,7 @@
             <div class="alert alert-danger">
                 <button class="close" data-close="alert"></button>
                 <span> {!! Session::get('errorMsg') !!} </span>
+              	<span><br/>由于系统升级，密码重置为与邮箱相同，请使尽快登陆并修改密码。1月22日以后注册的用户不受影响</span>
             </div>
         @endif
         @if (Session::get('regSuccessMsg'))
