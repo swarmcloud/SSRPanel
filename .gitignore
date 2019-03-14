@@ -2,6 +2,7 @@
 /public/upload
 /public/storage
 /public/hot
+/public/.well-known
 /storage/framework/cache
 /storage/framework/sessions
 /storage/framework/views
