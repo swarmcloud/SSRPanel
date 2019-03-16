@@ -913,6 +913,7 @@
                     img.width = 113;
                     img.setAttribute('src', urlPrefix + list[i].url + (list[i].url.indexOf('?') == -1 ? '?noCache=':'&noCache=') + (+new Date()).toString(36) );
                     img.setAttribute('_src', urlPrefix + list[i].url);
+                  	img.setAttribute('style','max-width:100%');
                     domUtils.addClass(icon, 'icon');
 
                     item.appendChild(img);
@@ -1102,6 +1103,7 @@
                     };
                     img.width = 113;
                     img.setAttribute('src', list[i].src);
+                    img.setAttribute('style','max-width:100%');
 
                     link.href = list[i].url;
                     link.target = '_blank';

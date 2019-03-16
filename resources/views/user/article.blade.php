@@ -15,8 +15,8 @@
                         </div>
                     </div>
                     <div class="portlet-body">
-                        <div class="tab-content">
-                            {!! $info->content !!}
+                        <div class="tab-content" id="article_content_container">
+                            <!-- {!! $info->content !!} -->
                         </div>
                     </div>
                 </div>
@@ -26,4 +26,13 @@
     <!-- END CONTENT BODY -->
 @endsection
 @section('script')
+    <script type="text/javascript">
+        //
+      function setImageStyle(){
+        var article = '{!! $info->content !!}';
+        article = article.replace(/<img/g, '<img style="max-width:100%"');
+        document.getElementById("article_content_container").innerHTML = article;
+      }
+      window.onload = setImageStyle;
+    </script>
 @endsection

@@ -5,7 +5,6 @@
     <!-- BEGIN CONTENT BODY -->
     <div class="page-content" style="padding-top:0;">
         <!-- BEGIN PAGE BASE CONTENT -->
-
         <div class="row">
             <div class="col-md-12">
                 <div class="portlet light bordered">
@@ -32,7 +31,7 @@
                 </div>
             </div>
         </div>
-
+<<<<<<< HEAD
         <div class="row">
             <div class="col-md-6">
                 <div class="portlet light bordered">

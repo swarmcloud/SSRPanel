@@ -60,29 +60,13 @@
                                                 <div class="tab-pane active" id="tools1">
                                                     <ol>
                                                         <li> <a href="{{asset('clients/ShadowsocksX-NG-R8-1.4.4.dmg')}}" target="_blank">点击此处</a>下载客户端并启动 </li>
-                                                        <li> 点击状态栏纸飞机 -> 服务器 -> 编辑订阅 </li>
-                                                        <li> 点击窗口左下角 “+”号 新增订阅，完整复制本页上方“订阅服务”处地址，将其粘贴至“订阅地址”栏，点击右下角“OK” </li>
-                                                        <li> 点击纸飞机 -> 服务器 -> 手动更新订阅 </li>
-                                                        <li> 点击纸飞机 -> 服务器，选定合适服务器 </li>
-                                                        <li> 点击纸飞机 -> 打开Shadowsocks </li>
-                                                        <li> 点击纸飞机 -> PAC自动模式 </li>
-                                                        <li> 点击纸飞机 -> 代理设置->从 GFW List 更新 PAC </li>
-                                                        <li> 打开系统偏好设置 -> 网络，在窗口左侧选定显示为“已连接”的网络，点击右下角“高级...” </li>
-                                                        <li> 切换至“代理”选项卡，勾选“自动代理配置”和“不包括简单主机名”，点击右下角“好”，再次点击右下角“应用” </li>
+                                                        <li> <a href="/article?id=10" target="_blank">点击此处</a>查看Mac图文教程</li>
                                                     </ol>
                                                 </div>
                                                 <div class="tab-pane" id="tools2">
                                                     <ol>
                                                         <li> <a href="{{asset('clients/ShadowsocksR-win.zip')}}" target="_blank">点击此处</a>下载客户端并启动 </li>
-                                                        <li> 运行 ShadowsocksR 文件夹内的 ShadowsocksR.exe </li>
-                                                        <li> 右击桌面右下角状态栏（或系统托盘）纸飞机 -> 服务器订阅 -> SSR服务器订阅设置 </li>
-                                                        <li> 点击窗口左下角 “Add” 新增订阅，完整复制本页上方 “订阅服务” 处地址，将其粘贴至“网址”栏，点击“确定” </li>
-                                                        <li> 右击纸飞机 -> 服务器订阅 -> 更新SSR服务器订阅（不通过代理） </li>
-                                                        <li> 右击纸飞机 -> 服务器，选定合适服务器 </li>
-                                                        <li> 右击纸飞机 -> 系统代理模式 -> PAC模式 </li>
-                                                        <li> 右击纸飞机 -> PAC -> 更新PAC为GFWList </li>
-                                                        <li> 右击纸飞机 -> 代理规则 -> 绕过局域网和大陆 </li>
-                                                        <li> 右击纸飞机，取消勾选“服务器负载均衡” </li>
+                                                        <li> <a href="/article?id=7" target="_blank">点击此处</a>查看Windows图文教程</li>
                                                     </ol>
                                                 </div>
                                                 <div class="tab-pane" id="tools3">
@@ -93,7 +77,7 @@
                                                     </ol>
                                                 </div>
                                                 <div class="tab-pane" id="tools4">
-                                                    <ol>
+                                                    <ol style="display:none">
                                                         @if(Agent::is('iPhone') || Agent::is('iPad'))
                                                             @if(Agent::is('Safari'))
                                                                 <li> <a href="{{$ipa_list}}" target="_blank">点击此处在线安装</a></li>
@@ -110,14 +94,15 @@
                                                             <li> 请使用 Safari浏览器 访问本页面 </li>
                                                         @endif
                                                     </ol>
+                                                  	<ol>
+                                                 		<li> 请<b style="font-size:18px">联系站长</b>获取苹果应用商店美国区账号，没有站长联系方式的朋友请使用<a href="{{url('tickets')}}">服务单</a> </li>
+                                                    	<li> <a href="/article?id=8" target="_blank">点击此处</a>查看iPhone图文教程 </li>
+                                                	</ol>
                                                 </div>
                                                 <div class="tab-pane" id="tools5">
                                                     <ol>
                                                         <li> <a href="{{asset('clients/ShadowsocksRR-3.5.1.1.apk')}}" target="_blank">点击此处</a>下载客户端并启动 </li>
-                                                        <li> 单击左上角的shadowsocksR进入配置文件页，点击右下角的“+”号，点击“添加/升级SSR订阅”，完整复制本页上方“订阅服务”处地址，填入订阅信息并保存 </li>
-                                                        <li> 选中任意一个节点，返回软件首页 </li>
-                                                        <li> 在软件首页处找到“路由”选项，并将其改为“绕过局域网及中国大陆地址” </li>
-                                                        <li> 点击右上角的小飞机图标进行连接，提示是否添加（或创建）VPN连接，点同意（或允许） </li>
+                                                        <li> <a href="/article?id=9" target="_blank">点击此处</a>查看安卓图文教程</li>
                                                     </ol>
                                                 </div>
                                                 <div class="tab-pane" id="tools6">
