@@ -13,7 +13,7 @@
                             <i class="icon-directions font-green hide"></i>
                             <span class="caption-subject font-blue bold"> {{trans('home.announcement')}} </span>
                         </div>
-                        <div class="actions">
+                        <div style="display:none" class="actions">
                             <span class="caption-subject">
                                 <a class="btn btn-sm blue" href="javascript:checkIn();"> 签到 </a>
                             </span>
