@@ -16,9 +16,6 @@
             <div class="col-md-12">
                 <div class="portlet light">
                     <h4 class="">
-                        <span class="font-blue">账户等级：</span>
-                        <span class="font-red">{{Auth::user()->levelList->level_name}}</span>
-                        &ensp;&ensp;
                         <span class="font-blue">账户余额：</span>
                         <span class="font-red">{{Auth::user()->balance}}元</span>
                         <a class="btn btn-sm red" href="#" data-toggle="modal" data-target="#charge_modal" style="color: #FFF;">{{trans('home.recharge')}}</a>
