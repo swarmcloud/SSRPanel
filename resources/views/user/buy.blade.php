@@ -60,7 +60,7 @@
                         <h2 class="invoice-title"> {{trans('home.service_total_price')}} </h2>
                         <p class="invoice-desc grand-total"> ￥{{$goods->price}} </p>
                     </div>
-                    <div class="col-xs-6">
+                    <div style="display:none" class="col-xs-6">
                         <h2 class="invoice-title"> {{trans('home.coupon')}} </h2>
                         <p class="invoice-desc">
                             <div class="input-group">
